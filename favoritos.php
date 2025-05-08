@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Inmobiliaria ModernHouse</title>
+  <title>Favoritos | ModernHouse</title>
   <style>
     * {
       margin: 0;
@@ -13,7 +13,7 @@
 
     body {
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f8f9fa;
+      background-color: #f4f4f4;
       color: #333;
     }
 
@@ -38,34 +38,19 @@
       font-weight: 500;
     }
 
-    .hero {
-      background: url('https://images.unsplash.com/photo-1599423300746-b62533397364') no-repeat center center/cover;
-      color: white;
-      height: 60vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-    }
-
-    .hero h2 {
-      font-size: 40px;
-      text-align: center;
-    }
-
     .section {
       padding: 40px 20px;
       max-width: 1200px;
       margin: auto;
     }
 
-    .section h3 {
+    .section h2 {
       margin-bottom: 20px;
       font-size: 28px;
       color: #0d6efd;
     }
 
-    .cards {
+    .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
@@ -103,48 +88,19 @@
       color: #555;
     }
 
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #888;
+      font-size: 18px;
+    }
+
     footer {
       background-color: #0d6efd;
       color: white;
       text-align: center;
       padding: 20px;
       margin-top: 40px;
-    }
-
-    .buttons {
-      margin-top: 10px;
-    }
-
-    .buttons a {
-      background-color: #fff;
-      color: #0d6efd;
-      padding: 8px 16px;
-      margin-left: 10px;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-
-    .buttons a:hover {
-      background-color: #e6e6e6;
-    }
-
-    @media (max-width: 600px) {
-      .hero h2 {
-        font-size: 28px;
-      }
-
-      nav {
-        margin-top: 10px;
-        width: 100%;
-        text-align: center;
-      }
-
-      nav a {
-        display: inline-block;
-        margin: 10px;
-      }
     }
   </style>
 </head>
@@ -153,48 +109,45 @@
   <header>
     <h1>ModernHouse</h1>
     <nav>
-      <a href="#">Inicio</a>
-      <a href="propiedades.php">Propiedades</a>
-      <a href="favoritos.php">Favoritos</a>
-      <a href="contactos.php">Contacto</a>
+      <a href="index.html">Inicio</a>
+      <a href="propiedades.html">Propiedades</a>
+      <a href="favoritos.html">Favoritos</a>
+      <a href="#">Contacto</a>
     </nav>
-    <div class="buttons">
-      <a href="#">Login</a>
-      <a href="#">Registrarse</a>
-    </div>
   </header>
 
-  <section class="hero">
-    <h2>Encuentra tu hogar ideal con facilidad</h2>
-  </section>
-
   <section class="section">
-    <h3>Propiedades Destacadas</h3>
-    <div class="cards">
+    <h2>Tus Propiedades Favoritas</h2>
+
+    <div class="grid">
       <div class="card">
-        <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7" alt="Casa 1">
+        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be" alt="Favorito 1">
         <div class="card-body">
-          <h4>Casa Familiar en las afueras</h4>
-          <p>4 habitaciones · 3 baños · 250 m²</p>
+          <h4>Estudio céntrico</h4>
+          <p>Alquiler - $850/mes · 1 hab · 1 baño · 60 m²</p>
         </div>
       </div>
 
       <div class="card">
-        <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c" alt="Casa 2">
+        <img src="https://images.unsplash.com/photo-1600585153881-19c3e08a8b3e" alt="Favorito 2">
         <div class="card-body">
-          <h4>Departamento moderno en el centro</h4>
-          <p>2 habitaciones · 2 baños · 120 m²</p>
+          <h4>Casa moderna suburbana</h4>
+          <p>Alquiler - $1,800/mes · 4 hab · 3 baños · 210 m²</p>
         </div>
       </div>
 
       <div class="card">
-        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Casa 3">
+        <img src="https://images.unsplash.com/photo-1600047509350-0e0d2e97f34b" alt="Favorito 3">
         <div class="card-body">
-          <h4>Ático con vista al mar</h4>
-          <p>3 habitaciones · 2 baños · 180 m²</p>
+          <h4>Casa con piscina</h4>
+          <p>Alquiler - $2,400/mes · 5 hab · 4 baños · 320 m²</p>
         </div>
       </div>
     </div>
+
+    <!-- Si no hay favoritos, muestra este mensaje -->
+    <!-- <div class="empty">Aún no has agregado ninguna propiedad a tus favoritos.</div> -->
+
   </section>
 
   <footer>
