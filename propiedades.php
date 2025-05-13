@@ -129,7 +129,7 @@
     <h1>ModernHouse</h1>
     <nav>
       <a href="index.php">Inicio</a>
-      <a href="propiedades.php">Propiedades</a>
+      <a href="#">Propiedades</a>
       <a href="favoritos.php">Favoritos</a>
       <a href="contactos.php">Contacto</a>
     </nav>

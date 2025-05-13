@@ -159,8 +159,8 @@
       <a href="contactos.php">Contacto</a>
     </nav>
     <div class="buttons">
-      <a href="#">Login</a>
-      <a href="#">Registrarse</a>
+      <a href="login.php">Login</a>
+      <a href="registro.php">Registrarse</a>
     </div>
   </header>
 

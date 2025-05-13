@@ -109,10 +109,10 @@
   <header>
     <h1>ModernHouse</h1>
     <nav>
-      <a href="index.html">Inicio</a>
-      <a href="propiedades.html">Propiedades</a>
-      <a href="favoritos.html">Favoritos</a>
-      <a href="#">Contacto</a>
+      <a href="index.php">Inicio</a>
+      <a href="propiedades.php">Propiedades</a>
+      <a href="#">Favoritos</a>
+      <a href="contactos">Contacto</a>
     </nav>
   </header>
 

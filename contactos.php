@@ -105,7 +105,7 @@
       <a href="index.php">Inicio</a>
       <a href="propiedades.php">Propiedades</a>
       <a href="favoritos.php">Favoritos</a>
-      <a href="contacto.php">Contacto</a>
+      <a href="#">Contacto</a>
     </nav>
   </header>
 

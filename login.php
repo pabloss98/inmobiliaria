@@ -1,11 +1,54 @@
-<?php include 'includes/header.php'; ?>
+<?php
+session_start();
+include 'includes/header.php';
+require 'includes/conexion.php';
+
+$mensaje = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+
+    $stmt = $conexion->prepare("SELECT id, nombre, contraseña, rol_id, estado FROM usuarios WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    if ($resultado->num_rows === 1) {
+        $usuario = $resultado->fetch_assoc();
+
+        if (!$usuario['estado']) {
+            $mensaje = 'Tu cuenta está desactivada.';
+        } elseif (password_verify($password, $usuario['contraseña'])) {
+            $_SESSION['usuario_id'] = $usuario['id'];
+            $_SESSION['nombre'] = $usuario['nombre'];
+            $_SESSION['rol_id'] = $usuario['rol_id'];
+
+            if ($usuario['rol_id'] === 1) {
+                header("Location: admin/dashboard.php");
+            } else {
+                header("Location: cliente/panel.php");
+            }
+            exit();
+        } else {
+            $mensaje = 'Contraseña incorrecta.';
+        }
+    } else {
+        $mensaje = 'Correo no registrado.';
+    }
+}
+?>
 
 <h2 class="mb-4">Iniciar Sesión</h2>
 
-<form class="row g-3" action="#" method="POST">
+<?php if ($mensaje): ?>
+    <div class="alert alert-danger"><?= $mensaje ?></div>
+<?php endif; ?>
+
+<form class="row g-3" method="POST">
     <div class="col-md-12">
         <label for="email" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
+        <input type="email" class="form-control" id="email" name="email" required>
     </div>
     <div class="col-md-12">
         <label for="password" class="form-label">Contraseña</label>

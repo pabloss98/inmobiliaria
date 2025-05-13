@@ -1,15 +1,59 @@
-<?php include 'includes/header.php'; ?>
+<?php
+session_start();
+include 'includes/header.php';
+require 'includes/conexion.php';
+
+$mensaje = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre = trim($_POST['nombre']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirmar = $_POST['confirmar'];
+
+    if ($password !== $confirmar) {
+        $mensaje = 'Las contraseñas no coinciden.';
+    } else {
+        $stmt = $conexion->prepare("SELECT id FROM usuarios WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            $mensaje = 'Este correo ya está registrado.';
+        } else {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $rol_id = 2; // 2 = cliente por defecto
+            $estado = 1;
+
+            $insert = $conexion->prepare("INSERT INTO usuarios (nombre, email, contraseña, rol_id, estado) VALUES (?, ?, ?, ?, ?)");
+            $insert->bind_param("sssii", $nombre, $email, $hash, $rol_id, $estado);
+
+            if ($insert->execute()) {
+                header("Location: login.php?registro=exitoso");
+                exit();
+            } else {
+                $mensaje = 'Error al registrar. Intenta de nuevo.';
+            }
+        }
+    }
+}
+?>
 
 <h2 class="mb-4">Registro de Usuario</h2>
 
-<form class="row g-3" action="#" method="POST">
+<?php if ($mensaje): ?>
+    <div class="alert alert-danger"><?= $mensaje ?></div>
+<?php endif; ?>
+
+<form class="row g-3" method="POST">
     <div class="col-md-6">
         <label for="nombre" class="form-label">Nombre completo</label>
-        <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
+        <input type="text" class="form-control" id="nombre" name="nombre" required>
     </div>
     <div class="col-md-6">
         <label for="email" class="form-label">Correo electrónico</label>
-        <input type="email" class="form-control" id="email" name="email" placeholder="ejemplo@correo.com" required>
+        <input type="email" class="form-control" id="email" name="email" required>
     </div>
     <div class="col-md-6">
         <label for="password" class="form-label">Contraseña</label>
