@@ -1,3 +1,26 @@
+<?php
+session_start();
+require 'includes/conexion.php';
+
+if (!isset($_SESSION['usuario_id'])) {
+  header("Location: login.php");
+  exit();
+}
+
+$usuario_id = $_SESSION['usuario_id'];
+
+$query = "
+  SELECT p.*
+  FROM propiedades p
+  INNER JOIN favoritos f ON p.id = f.propiedad_id
+  WHERE f.usuario_id = ?
+";
+
+$stmt = $conexion->prepare($query);
+$stmt->bind_param("i", $usuario_id);
+$stmt->execute();
+$resultado = $stmt->get_result();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -112,47 +135,36 @@
       <a href="index.php">Inicio</a>
       <a href="propiedades.php">Propiedades</a>
       <a href="#">Favoritos</a>
-      <a href="contactos">Contacto</a>
+      <a href="contactos.php">Contacto</a>
     </nav>
   </header>
 
   <section class="section">
     <h2>Tus Propiedades Favoritas</h2>
 
+    <?php if ($resultado->num_rows > 0): ?>
     <div class="grid">
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be" alt="Favorito 1">
-        <div class="card-body">
-          <h4>Estudio céntrico</h4>
-          <p>Alquiler - $850/mes · 1 hab · 1 baño · 60 m²</p>
+      <?php while ($fila = $resultado->fetch_assoc()): ?>
+        <div class="card">
+          <img src="<?= htmlspecialchars($fila['imagen_url']) ?>" alt="<?= htmlspecialchars($fila['titulo']) ?>">
+          <div class="card-body">
+            <h4><?= htmlspecialchars($fila['titulo']) ?></h4>
+            <p>
+              <?= htmlspecialchars($fila['descripcion']) ?><br>
+              <?= $fila['habitaciones'] ?> hab · <?= $fila['banos'] ?> baños · <?= $fila['metros_cuadrados'] ?> m²<br>
+              <?= number_format($fila['precio'], 0, ',', '.') ?> €
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1600585153881-19c3e08a8b3e" alt="Favorito 2">
-        <div class="card-body">
-          <h4>Casa moderna suburbana</h4>
-          <p>Alquiler - $1,800/mes · 4 hab · 3 baños · 210 m²</p>
-        </div>
-      </div>
-
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1600047509350-0e0d2e97f34b" alt="Favorito 3">
-        <div class="card-body">
-          <h4>Casa con piscina</h4>
-          <p>Alquiler - $2,400/mes · 5 hab · 4 baños · 320 m²</p>
-        </div>
-      </div>
+      <?php endwhile; ?>
     </div>
-
-    <!-- Si no hay favoritos, muestra este mensaje -->
-    <!-- <div class="empty">Aún no has agregado ninguna propiedad a tus favoritos.</div> -->
-
+    <?php else: ?>
+      <div class="empty">Aún no has agregado ninguna propiedad a tus favoritos.</div>
+    <?php endif; ?>
   </section>
 
   <footer>
     © 2025 ModernHouse - Todos los derechos reservados.
   </footer>
-
 </body>
 </html>

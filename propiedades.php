@@ -1,3 +1,25 @@
+<?php
+session_start();
+require 'includes/conexion.php';
+
+$usuario_id = $_SESSION['usuario_id'] ?? null;
+
+// Obtener todas las propiedades
+$sql = "SELECT * FROM propiedades";
+$result = $conexion->query($sql);
+
+// Obtener favoritos del usuario (si está logueado)
+$favoritos = [];
+if ($usuario_id) {
+  $stmt = $conexion->prepare("SELECT propiedad_id FROM favoritos WHERE usuario_id = ?");
+  $stmt->bind_param("i", $usuario_id);
+  $stmt->execute();
+  $res_fav = $stmt->get_result();
+  while ($row = $res_fav->fetch_assoc()) {
+    $favoritos[] = $row['propiedad_id'];
+  }
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -139,113 +161,37 @@
     <button>Todos</button>
     <button>Comprar</button>
     <button>Alquilar</button>
-    <button>Favoritos</button>
+    <button onclick="location.href='favoritos.php'">Favoritos</button>
   </div>
 
   <div class="grid">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7" alt="Propiedad 1">
-      <div class="card-body">
-        <h4>Casa en las afueras <span class="fav">♡</span></h4>
-        <p>Compra - $250,000 · 4 hab · 3 baños · 250 m²</p>
+    <?php while ($prop = $result->fetch_assoc()): ?>
+      <div class="card">
+        <img src="<?= htmlspecialchars($prop['imagen_url']) ?>" alt="<?= htmlspecialchars($prop['titulo']) ?>">
+        <div class="card-body">
+          <h4>
+            <?= htmlspecialchars($prop['titulo']) ?>
+            <?php if ($usuario_id): ?>
+              <form action="guardar_favorito.php" method="POST" style="display:inline;">
+                <input type="hidden" name="propiedad_id" value="<?= $prop['id'] ?>">
+                <button type="submit" class="fav" style="background:none; border:none; color:<?= in_array($prop['id'], $favoritos) ? '#f44336' : '#ccc' ?>;">
+                  <?= in_array($prop['id'], $favoritos) ? '♥' : '♡' ?>
+                </button>
+              </form>
+            <?php endif; ?>
+          </h4>
+          <p>
+            <?= htmlspecialchars($prop['descripcion']) ?><br>
+            <?= $prop['habitaciones'] ?> hab · <?= $prop['banos'] ?> baños · <?= $prop['metros_cuadrados'] ?> m²<br>
+            <?= number_format($prop['precio'], 0, ',', '.') ?> €
+          </p>
+        </div>
       </div>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c" alt="Propiedad 2">
-      <div class="card-body">
-        <h4>Departamento en el centro <span class="fav">♡</span></h4>
-        <p>Alquiler - $1,200/mes · 2 hab · 2 baños · 120 m²</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Propiedad 3">
-      <div class="card-body">
-        <h4>Ático con vista al mar <span class="fav">♡</span></h4>
-        <p>Compra - $320,000 · 3 hab · 2 baños · 180 m²</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1600585153881-19c3e08a8b3e" alt="Propiedad 4">
-      <div class="card-body">
-        <h4>Casa moderna suburbana <span class="fav">♡</span></h4>
-        <p>Alquiler - $1,800/mes · 4 hab · 3 baños · 210 m²</p>
-      </div>
-    </div>
-
-    <div class="card">
-  <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914" alt="Propiedad 5">
-  <div class="card-body">
-    <h4>Loft industrial <span class="fav">♡</span></h4>
-    <p>Compra - $210,000 · 2 hab · 1 baño · 95 m²</p>
+    <?php endwhile; ?>
   </div>
-</div>
-
-<div class="card">
-  <img src="https://images.unsplash.com/photo-1600047509350-0e0d2e97f34b" alt="Propiedad 6">
-  <div class="card-body">
-    <h4>Casa con piscina <span class="fav">♡</span></h4>
-    <p>Alquiler - $2,400/mes · 5 hab · 4 baños · 320 m²</p>
-  </div>
-</div>
-
-<div class="card">
-  <img src="https://images.unsplash.com/photo-1613977257363-bf3f71bbdc20" alt="Propiedad 7">
-  <div class="card-body">
-    <h4>Departamento minimalista <span class="fav">♡</span></h4>
-    <p>Compra - $185,000 · 1 hab · 1 baño · 70 m²</p>
-  </div>
-</div>
-
-<div class="card">
-  <img src="https://images.unsplash.com/photo-1625813571953-b4f91ae0f2be" alt="Propiedad 8">
-  <div class="card-body">
-    <h4>Casa rústica en montaña <span class="fav">♡</span></h4>
-    <p>Compra - $275,000 · 3 hab · 2 baños · 200 m²</p>
-  </div>
-</div>
-
-<div class="card">
-  <img src="https://images.unsplash.com/photo-1559599189-8c3e3d76a9f2" alt="Propiedad 9">
-  <div class="card-body">
-    <h4>Casa estilo colonial <span class="fav">♡</span></h4>
-    <p>Alquiler - $1,500/mes · 4 hab · 3 baños · 220 m²</p>
-  </div>
-</div>
-
-<div class="card">
-  <img src="https://images.unsplash.com/photo-1507089947368-19c1da9775ae" alt="Propiedad 10">
-  <div class="card-body">
-    <h4>Ático en la ciudad <span class="fav">♡</span></h4>
-    <p>Compra - $295,000 · 2 hab · 2 baños · 150 m²</p>
-  </div>
-</div>
-
-<div class="card">
-  <img src="https://images.unsplash.com/photo-1588854337236-f44aa2c71ba3" alt="Propiedad 11">
-  <div class="card-body">
-    <h4>Residencia de lujo <span class="fav">♡</span></h4>
-    <p>Compra - $950,000 · 6 hab · 5 baños · 500 m²</p>
-  </div>
-</div>
-
-<div class="card">
-  <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be" alt="Propiedad 12">
-  <div class="card-body">
-    <h4>Estudio céntrico <span class="fav">♡</span></h4>
-    <p>Alquiler - $850/mes · 1 hab · 1 baño · 60 m²</p>
-  </div>
-</div>
-
-  </div>
-
-  
 
   <footer>
     © 2025 ModernHouse - Todos los derechos reservados.
   </footer>
-
 </body>
 </html>

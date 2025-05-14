@@ -130,6 +130,26 @@
       background-color: #e6e6e6;
     }
 
+    /* Estilo para mostrar el nombre del usuario */
+    .user-info {
+      color: white;
+      font-size: 16px;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-info a {
+      color: #fff;
+      font-weight: bold;
+      margin-left: 10px;
+      text-decoration: none;
+    }
+
+    .user-info a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 600px) {
       .hero h2 {
         font-size: 28px;
@@ -158,9 +178,19 @@
       <a href="favoritos.php">Favoritos</a>
       <a href="contactos.php">Contacto</a>
     </nav>
-    <div class="buttons">
-      <a href="login.php">Login</a>
-      <a href="registro.php">Registrarse</a>
+
+    <!-- Verificar si el usuario está logueado y mostrar su nombre o los botones de login/registro -->
+    <div class="user-info">
+      <?php
+      session_start();
+      if (isset($_SESSION['usuario_id'])) {
+        echo 'Hola, ' . htmlspecialchars($_SESSION['nombre']);
+        echo ' <a href="logout.php">Cerrar sesión</a>';
+      } else {
+        echo '<a href="login.php">Login</a>';
+        echo '<a href="registro.php">Registrarse</a>';
+      }
+      ?>
     </div>
   </header>
 
