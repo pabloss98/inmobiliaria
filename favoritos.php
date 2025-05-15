@@ -148,7 +148,16 @@ $resultado = $stmt->get_result();
         <div class="card">
           <img src="<?= htmlspecialchars($fila['imagen_url']) ?>" alt="<?= htmlspecialchars($fila['titulo']) ?>">
           <div class="card-body">
-            <h4><?= htmlspecialchars($fila['titulo']) ?></h4>
+            <h4>
+              <?= htmlspecialchars($fila['titulo']) ?>
+              <form action="guardar_favorito.php" method="POST" style="display:inline;">
+                <input type="hidden" name="propiedad_id" value="<?= $fila['id'] ?>">
+                <button type="submit" class="fav" style="background:none; border:none; color:#f44336; font-size:20px; cursor:pointer;">
+                  ♥
+                </button>
+              </form>
+            </h4>
+
             <p>
               <?= htmlspecialchars($fila['descripcion']) ?><br>
               <?= $fila['habitaciones'] ?> hab · <?= $fila['banos'] ?> baños · <?= $fila['metros_cuadrados'] ?> m²<br>

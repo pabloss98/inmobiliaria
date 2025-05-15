@@ -166,20 +166,21 @@ if ($usuario_id) {
 
   <div class="grid">
     <?php while ($prop = $result->fetch_assoc()): ?>
+  <div style="position: relative;">
+    <?php if ($usuario_id): ?>
+      <form action="guardar_favorito.php" method="POST" style="position: absolute; top: 10px; right: 10px; z-index: 2;">
+        <input type="hidden" name="propiedad_id" value="<?= $prop['id'] ?>">
+        <button type="submit" class="fav" style="background:none; border:none; font-size: 24px; color:<?= in_array($prop['id'], $favoritos) ? '#f44336' : '#ccc' ?>;">
+          <?= in_array($prop['id'], $favoritos) ? '♥' : '♡' ?>
+        </button>
+      </form>
+    <?php endif; ?>
+    
+    <a href="detalle_propiedad.php?id=<?= $prop['id'] ?>" style="text-decoration:none; color:inherit;">
       <div class="card">
         <img src="<?= htmlspecialchars($prop['imagen_url']) ?>" alt="<?= htmlspecialchars($prop['titulo']) ?>">
         <div class="card-body">
-          <h4>
-            <?= htmlspecialchars($prop['titulo']) ?>
-            <?php if ($usuario_id): ?>
-              <form action="guardar_favorito.php" method="POST" style="display:inline;">
-                <input type="hidden" name="propiedad_id" value="<?= $prop['id'] ?>">
-                <button type="submit" class="fav" style="background:none; border:none; color:<?= in_array($prop['id'], $favoritos) ? '#f44336' : '#ccc' ?>;">
-                  <?= in_array($prop['id'], $favoritos) ? '♥' : '♡' ?>
-                </button>
-              </form>
-            <?php endif; ?>
-          </h4>
+          <h4><?= htmlspecialchars($prop['titulo']) ?></h4>
           <p>
             <?= htmlspecialchars($prop['descripcion']) ?><br>
             <?= $prop['habitaciones'] ?> hab · <?= $prop['banos'] ?> baños · <?= $prop['metros_cuadrados'] ?> m²<br>
@@ -187,7 +188,10 @@ if ($usuario_id) {
           </p>
         </div>
       </div>
-    <?php endwhile; ?>
+    </a>
+  </div>
+<?php endwhile; ?>
+
   </div>
 
   <footer>
