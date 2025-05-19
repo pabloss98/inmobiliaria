@@ -60,6 +60,42 @@ if ($usuario_id) {
       font-weight: 500;
     }
 
+    .user-info {
+      color: white;
+      font-size: 16px;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-info a {
+      color: #fff;
+      font-weight: bold;
+      margin-left: 10px;
+      text-decoration: none;
+    }
+
+    .user-info a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .hero h2 {
+        font-size: 28px;
+      }
+
+      nav {
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+      }
+
+      nav a {
+        display: inline-block;
+        margin: 10px;
+      }
+    }
+
     .filters {
       background-color: #fff;
       padding: 20px;
@@ -147,20 +183,33 @@ if ($usuario_id) {
 </head>
 <body>
 
-  <header>
+   <header>
     <h1>ModernHouse</h1>
     <nav>
       <a href="index.php">Inicio</a>
-      <a href="#">Propiedades</a>
+      <a href="propiedades.php">Propiedades</a>
       <a href="favoritos.php">Favoritos</a>
       <a href="contactos.php">Contacto</a>
     </nav>
+
+    <!-- Verificar si el usuario está logueado y mostrar su nombre o los botones de login/registro -->
+    <div class="user-info">
+      <?php
+if (isset($_SESSION['usuario_id'])) {
+  echo 'Hola, ' . htmlspecialchars($_SESSION['nombre']);
+  echo ' <a href="logout.php">Cerrar sesión</a>';
+} else {
+  echo '<a href="login.php">Login</a>';
+  echo '<a href="registro.php">Registrarse</a>';
+}
+?>
+
   </header>
 
   <div class="filters">
-    <button>Todos</button>
-    <button>Comprar</button>
-    <button>Alquilar</button>
+<a href="compras.php"><button>Comprar</button></a>
+<a href="alquilar.php"><button>Alquilar</button></a>
+
     <button onclick="location.href='favoritos.php'">Favoritos</button>
   </div>
 
