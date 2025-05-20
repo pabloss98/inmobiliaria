@@ -206,12 +206,7 @@ if (isset($_SESSION['usuario_id'])) {
 
   </header>
 
-  <div class="filters">
-<a href="compras.php"><button>Comprar</button></a>
-<a href="alquilar.php"><button>Alquilar</button></a>
 
-    <button onclick="location.href='favoritos.php'">Favoritos</button>
-  </div>
 
   <div class="grid">
     <?php while ($prop = $result->fetch_assoc()): ?>

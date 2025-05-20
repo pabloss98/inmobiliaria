@@ -177,6 +177,7 @@
       <a href="propiedades.php">Propiedades</a>
       <a href="favoritos.php">Favoritos</a>
       <a href="contactos.php">Contacto</a>
+      <a href="publicar.php">Publicar Propiedades</a>
     </nav>
 
     <!-- Verificar si el usuario está logueado y mostrar su nombre o los botones de login/registro -->
@@ -202,7 +203,7 @@
     <h3>Propiedades Destacadas</h3>
     <div class="cards">
       <div class="card">
-        <img src="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7" alt="Casa 1">
+        <img src="imagenes/casa6.png" alt="Casa 1">
         <div class="card-body">
           <h4>Casa Familiar en las afueras</h4>
           <p>4 habitaciones · 3 baños · 250 m²</p>
