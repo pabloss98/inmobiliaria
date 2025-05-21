@@ -18,7 +18,9 @@ $result = $conexion->query($sql);
 $pubs = $conexion->query("SELECT p.id, p.titulo, p.precio, p.estado, u.nombre 
                           FROM propiedades p 
                           LEFT JOIN usuarios u ON p.usuario_id = u.id 
+                          WHERE p.estado = 'pendiente'
                           ORDER BY p.id DESC");
+
 
 $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER BY id DESC");
 ?>
@@ -28,7 +30,7 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel de Administración</title>
- <style>
+  <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f4f6f8;
@@ -179,131 +181,127 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
 </head>
 <body>
 
-  <header>
-    <h1>Panel de Administración</h1>
-    <div>
-      <button onclick="mostrarSeccion('solicitudes')">Ventas/Alquileres</button>
-      <button onclick="mostrarSeccion('publicaciones')">Publicaciones</button>
-      <button onclick="mostrarSeccion('usuarios')">Usuarios</button>
-      <form action="logout.php" method="POST" style="display:inline;">
-        <button type="submit">Cerrar sesión</button>
-      </form>
-    </div>
-  </header>
-
-  <!-- SECCIÓN: Solicitudes -->
-  <div id="solicitudes" class="seccion">
-    <h2>Solicitudes de Compra/Alquiler</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Propiedad</th>
-          <th>Usuario</th>
-          <th>Tipo</th>
-          <th>Estado</th>
-          <th>Fecha</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php while ($sol = $result->fetch_assoc()): ?>
-          <tr>
-            <td data-label="ID"><?= $sol['id'] ?></td>
-            <td data-label="Propiedad"><?= htmlspecialchars($sol['titulo']) ?></td>
-            <td data-label="Usuario"><?= htmlspecialchars($sol['nombre'] ?? 'Invitado') ?></td>
-            <td data-label="Tipo"><?= ucfirst($sol['tipo_operacion']) ?></td>
-            <td data-label="Estado"><?= isset($sol['estado']) ? ucfirst($sol['estado']) : '—' ?></td>
-            <td data-label="Fecha"><?= $sol['fecha_solicitud'] ?></td>
-            <td data-label="Acciones">
-              <?php if (isset($sol['estado']) && $sol['estado'] === 'pendiente'): ?>
-                <form action="procesar_solicitud.php" method="POST">
-                  <input type="hidden" name="id" value="<?= $sol['id'] ?>">
-                  <button name="accion" value="aceptar">Aceptar</button>
-                  <button name="accion" value="rechazar">Rechazar</button>
-                </form>
-              <?php else: ?>
-                —
-              <?php endif; ?>
-            </td>
-          </tr>
-        <?php endwhile; ?>
-      </tbody>
-    </table>
+<header>
+  <h1>Panel de Administración</h1>
+  <div>
+    <button onclick="mostrarSeccion('solicitudes')">Ventas/Alquileres</button>
+    <button onclick="mostrarSeccion('publicaciones')">Publicaciones</button>
+    <button onclick="mostrarSeccion('usuarios')">Usuarios</button>
+    <form action="logout.php" method="POST" style="display:inline;">
+      <button type="submit">Cerrar sesión</button>
+    </form>
   </div>
+</header>
 
-  <!-- SECCIÓN: Publicaciones -->
-  <div id="publicaciones" class="seccion" style="display:none;">
-    <h2>Publicaciones de Propiedades</h2>
-    <table>
-      <thead>
+<!-- SECCIÓN: Solicitudes -->
+<div id="solicitudes" class="seccion">
+  <h2>Solicitudes de Compra/Alquiler</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Propiedad</th>
+        <th>Usuario</th>
+        <th>Tipo</th>
+        <th>Estado</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while ($sol = $result->fetch_assoc()): ?>
         <tr>
-          <th>ID</th>
-          <th>Título</th>
-          <th>Precio</th>
-          <th>Usuario</th>
-          <th>Estado</th>
-          <th>Acciones</th>
+          <td data-label="ID"><?= $sol['id'] ?></td>
+          <td data-label="Propiedad"><?= htmlspecialchars($sol['titulo']) ?></td>
+          <td data-label="Usuario"><?= htmlspecialchars($sol['nombre'] ?? 'Invitado') ?></td>
+          <td data-label="Tipo"><?= ucfirst($sol['tipo_operacion']) ?></td>
+          <td data-label="Estado"><?= isset($sol['estado']) ? ucfirst($sol['estado']) : '—' ?></td>
+          <td data-label="Fecha"><?= $sol['fecha_solicitud'] ?></td>
+          <td data-label="Acciones">
+            <?php if (isset($sol['estado']) && $sol['estado'] === 'pendiente'): ?>
+              <form action="procesar_solicitud.php" method="POST">
+                <input type="hidden" name="id" value="<?= $sol['id'] ?>">
+                <button name="accion" value="aceptar">Aceptar</button>
+                <button name="accion" value="rechazar">Rechazar</button>
+              </form>
+            <?php else: ?>
+              —
+            <?php endif; ?>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <?php while ($p = $pubs->fetch_assoc()): ?>
-          <tr>
-            <td data-label="ID"><?= $p['id'] ?></td>
-            <td data-label="Título"><?= htmlspecialchars($p['titulo']) ?></td>
-            <td data-label="Precio"><?= number_format($p['precio'], 2) ?> €</td>
-            <td data-label="Usuario"><?= htmlspecialchars($p['nombre'] ?? 'Invitado') ?></td>
-            <td data-label="Estado"><?= isset($p['estado']) ? ucfirst($p['estado']) : '—' ?></td>
-            <td data-label="Acciones">
-              <?php if (isset($p['estado']) && $p['estado'] === 'pendiente'): ?>
-                <form action="aprobar_publicacion.php" method="POST" style="display:inline;">
-                  <input type="hidden" name="id" value="<?= $p['id'] ?>">
-                  <button name="accion" value="aceptar">Aceptar</button>
-                  <button name="accion" value="rechazar">Rechazar</button>
-                </form>
-              <?php else: ?>
-                —
-              <?php endif; ?>
-            </td>
-          </tr>
-        <?php endwhile; ?>
-      </tbody>
-    </table>
-  </div>
+      <?php endwhile; ?>
+    </tbody>
+  </table>
+</div>
 
-  <!-- SECCIÓN: Usuarios -->
-  <div id="usuarios" class="seccion" style="display:none;">
-    <h2>Usuarios Registrados</h2>
-    <table>
-      <thead>
+<!-- SECCIÓN: Publicaciones -->
+<div id="publicaciones" class="seccion" style="display:none;">
+  <h2>Publicaciones de Propiedades</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Precio</th>
+        <th>Usuario</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while ($p = $pubs->fetch_assoc()): ?>
         <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Rol</th>
+          <td data-label="ID"><?= $p['id'] ?></td>
+          <td data-label="Título"><?= htmlspecialchars($p['titulo']) ?></td>
+          <td data-label="Precio"><?= number_format($p['precio'], 2) ?> €</td>
+          <td data-label="Usuario"><?= htmlspecialchars($p['nombre'] ?? 'Invitado') ?></td>
+          <td data-label="Estado"><?= isset($p['estado']) ? ucfirst($p['estado']) : '—' ?></td>
+          <td data-label="Acciones">
+            <form action="aprobar_publicacion.php" method="POST" style="display:inline;">
+              <input type="hidden" name="id" value="<?= $p['id'] ?>">
+              <button name="accion" value="aceptar">Aceptar</button>
+              <button name="accion" value="rechazar">Rechazar</button>
+            </form>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <?php while ($u = $users->fetch_assoc()): ?>
-          <tr>
-            <td data-label="ID"><?= $u['id'] ?></td>
-            <td data-label="Nombre"><?= htmlspecialchars($u['nombre']) ?></td>
-            <td data-label="Email"><?= htmlspecialchars($u['email']) ?></td>
-            <td data-label="Rol"><?= $u['rol_id'] == 1 ? 'Admin' : 'Usuario' ?></td>
-          </tr>
-        <?php endwhile; ?>
-      </tbody>
-    </table>
-  </div>
+      <?php endwhile; ?>
+    </tbody>
+  </table>
+</div>
 
-  <script>
-    function mostrarSeccion(id) {
-      document.querySelectorAll('.seccion').forEach(seccion => {
-        seccion.style.display = 'none';
-      });
-      document.getElementById(id).style.display = 'block';
-    }
-  </script>
+<!-- SECCIÓN: Usuarios -->
+<div id="usuarios" class="seccion" style="display:none;">
+  <h2>Usuarios Registrados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while ($u = $users->fetch_assoc()): ?>
+        <tr>
+          <td data-label="ID"><?= $u['id'] ?></td>
+          <td data-label="Nombre"><?= htmlspecialchars($u['nombre']) ?></td>
+          <td data-label="Email"><?= htmlspecialchars($u['email']) ?></td>
+          <td data-label="Rol"><?= $u['rol_id'] == 1 ? 'Admin' : 'Usuario' ?></td>
+        </tr>
+      <?php endwhile; ?>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  function mostrarSeccion(id) {
+    document.querySelectorAll('.seccion').forEach(seccion => {
+      seccion.style.display = 'none';
+    });
+    document.getElementById(id).style.display = 'block';
+  }
+</script>
 
 </body>
 </html>
