@@ -10,10 +10,10 @@ if (!isset($_SESSION['usuario_id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $titulo = $_POST['titulo'] ?? '';
   $descripcion = $_POST['descripcion'] ?? '';
-  $habitaciones = $_POST['habitaciones'] ?? 0;
-  $banos = $_POST['banos'] ?? 0;
-  $metros = $_POST['metros'] ?? 0;
-  $precio = $_POST['precio'] ?? 0;
+  $habitaciones = (int)($_POST['habitaciones'] ?? 0);
+  $banos = (int)($_POST['banos'] ?? 0);
+  $metros = (int)($_POST['metros'] ?? 0);
+  $precio = (float)($_POST['precio'] ?? 0);
   $tipo_operacion = $_POST['tipo_operacion'] ?? 'venta';
   $usuario_id = $_SESSION['usuario_id'];
 
@@ -21,9 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $imagen_url = '';
   if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
     $nombre_archivo = time() . "_" . basename($_FILES["imagen"]["name"]);
-    $ruta_destino = "uploads/" . $nombre_archivo;
+    $ruta_destino = "imagenes/" . $nombre_archivo;
 
-    // Validar tipo de archivo
     $ext = strtolower(pathinfo($ruta_destino, PATHINFO_EXTENSION));
     $ext_permitidas = ['jpg', 'jpeg', 'png', 'webp'];
 
@@ -33,12 +32,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 
-  $stmt = $conexion->prepare("INSERT INTO propiedades (titulo, descripcion, habitaciones, banos, metros_cuadrados, precio, tipo_operacion, imagen_url, usuario_id) 
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  // Insertar en tabla propiedades_pendientes
+  $stmt = $conexion->prepare("INSERT INTO propiedades_pendientes (titulo, descripcion, habitaciones, banos, metros_cuadrados, precio, tipo_operacion, imagen_url, usuario_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
   $stmt->bind_param("ssiiiissi", $titulo, $descripcion, $habitaciones, $banos, $metros, $precio, $tipo_operacion, $imagen_url, $usuario_id);
   $stmt->execute();
 
-  header("Location: propiedades.php");
+  echo "<script>
+          alert('Tu propiedad ha sido enviada para revisión. Será publicada una vez aprobada por un administrador.');
+          window.location.href='propiedades.php';
+        </script>";
   exit();
 }
 ?>
@@ -46,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Publicar Propiedad</title>
-  <style>
+    <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f2f2f2;
@@ -116,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="number" name="metros" min="0" required>
 
     <label for="precio">Precio (€)</label>
-    <input type="number" name="precio" min="0" required>
+    <input type="number" name="precio" min="0" step="0.01" required>
 
     <label for="tipo_operacion">Tipo de operación</label>
     <select name="tipo_operacion" required>
@@ -127,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <label for="imagen">Imagen</label>
     <input type="file" name="imagen" accept="image/*" required>
 
-    <button type="submit">Publicar</button>
+    <button type="submit">Enviar para revisión</button>
   </form>
 
 </body>

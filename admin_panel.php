@@ -7,7 +7,7 @@ if (!isset($_SESSION['rol_id']) || $_SESSION['rol_id'] != 1) {
   exit();
 }
 
-// Consultas para cada sección
+// Consultas
 $sql = "SELECT s.id, s.estado, s.fecha_solicitud, s.tipo_operacion, p.titulo, u.nombre 
         FROM solicitudes s
         JOIN propiedades p ON s.propiedad_id = p.id
@@ -15,18 +15,20 @@ $sql = "SELECT s.id, s.estado, s.fecha_solicitud, s.tipo_operacion, p.titulo, u.
         ORDER BY s.fecha_solicitud DESC";
 $result = $conexion->query($sql);
 
-$pubs = $conexion->query("SELECT p.id, p.titulo, p.precio, u.nombre FROM propiedades p LEFT JOIN usuarios u ON p.usuario_id = u.id ORDER BY p.id DESC");
+$pubs = $conexion->query("SELECT p.id, p.titulo, p.precio, p.estado, u.nombre 
+                          FROM propiedades p 
+                          LEFT JOIN usuarios u ON p.usuario_id = u.id 
+                          ORDER BY p.id DESC");
 
 $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER BY id DESC");
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel de Administración</title>
-  <style>
+ <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f4f6f8;
@@ -211,10 +213,10 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
             <td data-label="Propiedad"><?= htmlspecialchars($sol['titulo']) ?></td>
             <td data-label="Usuario"><?= htmlspecialchars($sol['nombre'] ?? 'Invitado') ?></td>
             <td data-label="Tipo"><?= ucfirst($sol['tipo_operacion']) ?></td>
-            <td data-label="Estado"><?= ucfirst($sol['estado']) ?></td>
+            <td data-label="Estado"><?= isset($sol['estado']) ? ucfirst($sol['estado']) : '—' ?></td>
             <td data-label="Fecha"><?= $sol['fecha_solicitud'] ?></td>
             <td data-label="Acciones">
-              <?php if ($sol['estado'] === 'pendiente'): ?>
+              <?php if (isset($sol['estado']) && $sol['estado'] === 'pendiente'): ?>
                 <form action="procesar_solicitud.php" method="POST">
                   <input type="hidden" name="id" value="<?= $sol['id'] ?>">
                   <button name="accion" value="aceptar">Aceptar</button>
@@ -240,6 +242,8 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
           <th>Título</th>
           <th>Precio</th>
           <th>Usuario</th>
+          <th>Estado</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -249,6 +253,18 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
             <td data-label="Título"><?= htmlspecialchars($p['titulo']) ?></td>
             <td data-label="Precio"><?= number_format($p['precio'], 2) ?> €</td>
             <td data-label="Usuario"><?= htmlspecialchars($p['nombre'] ?? 'Invitado') ?></td>
+            <td data-label="Estado"><?= isset($p['estado']) ? ucfirst($p['estado']) : '—' ?></td>
+            <td data-label="Acciones">
+              <?php if (isset($p['estado']) && $p['estado'] === 'pendiente'): ?>
+                <form action="aprobar_publicacion.php" method="POST" style="display:inline;">
+                  <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                  <button name="accion" value="aceptar">Aceptar</button>
+                  <button name="accion" value="rechazar">Rechazar</button>
+                </form>
+              <?php else: ?>
+                —
+              <?php endif; ?>
+            </td>
           </tr>
         <?php endwhile; ?>
       </tbody>
