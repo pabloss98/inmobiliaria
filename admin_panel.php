@@ -18,11 +18,14 @@ $result = $conexion->query($sql);
 $pubs = $conexion->query("SELECT p.id, p.titulo, p.precio, p.estado, u.nombre 
                           FROM propiedades p 
                           LEFT JOIN usuarios u ON p.usuario_id = u.id 
-                          WHERE p.estado = 'pendiente'
                           ORDER BY p.id DESC");
 
-
 $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER BY id DESC");
+
+$pendientes = $conexion->query("SELECT pp.id, pp.titulo, pp.precio, pp.estado, u.nombre 
+                                FROM propiedades_pendientes pp 
+                                LEFT JOIN usuarios u ON pp.usuario_id = u.id 
+                                ORDER BY pp.id DESC");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -145,7 +148,6 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
       font-weight: 600;
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       table, thead, tbody, th, td, tr {
         display: block;
@@ -186,6 +188,7 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
   <div>
     <button onclick="mostrarSeccion('solicitudes')">Ventas/Alquileres</button>
     <button onclick="mostrarSeccion('publicaciones')">Publicaciones</button>
+    <button onclick="mostrarSeccion('pendientes')">Prop. Pendientes</button>
     <button onclick="mostrarSeccion('usuarios')">Usuarios</button>
     <form action="logout.php" method="POST" style="display:inline;">
       <button type="submit">Cerrar sesión</button>
@@ -245,7 +248,6 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
         <th>Precio</th>
         <th>Usuario</th>
         <th>Estado</th>
-        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -256,9 +258,38 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
           <td data-label="Precio"><?= number_format($p['precio'], 2) ?> €</td>
           <td data-label="Usuario"><?= htmlspecialchars($p['nombre'] ?? 'Invitado') ?></td>
           <td data-label="Estado"><?= isset($p['estado']) ? ucfirst($p['estado']) : '—' ?></td>
+          </td>
+        </tr>
+      <?php endwhile; ?>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECCIÓN: Propiedades Pendientes -->
+<div id="pendientes" class="seccion" style="display:none;">
+  <h2>Propiedades Pendientes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Precio</th>
+        <th>Usuario</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php while ($pp = $pendientes->fetch_assoc()): ?>
+        <tr>
+          <td data-label="ID"><?= $pp['id'] ?></td>
+          <td data-label="Título"><?= htmlspecialchars($pp['titulo']) ?></td>
+          <td data-label="Precio"><?= number_format($pp['precio'], 2) ?> €</td>
+          <td data-label="Usuario"><?= htmlspecialchars($pp['nombre'] ?? 'Invitado') ?></td>
+          <td data-label="Estado"><?= isset($pp['estado']) ? ucfirst($pp['estado']) : '—' ?></td>
           <td data-label="Acciones">
-            <form action="aprobar_publicacion.php" method="POST" style="display:inline;">
-              <input type="hidden" name="id" value="<?= $p['id'] ?>">
+            <form action="aprobar_propiedad_pendiente.php" method="POST" style="display:inline;">
+              <input type="hidden" name="id" value="<?= $pp['id'] ?>">
               <button name="accion" value="aceptar">Aceptar</button>
               <button name="accion" value="rechazar">Rechazar</button>
             </form>
@@ -268,6 +299,15 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
     </tbody>
   </table>
 </div>
+
+<?php
+// Supongamos que esta es la consulta para obtener los usuarios
+$users = $conexion->query("SELECT id, nombre, email, rol_id, estado FROM usuarios");
+
+if (!$users) {
+    die("Error en la consulta de usuarios: " . $conexion->error);
+}
+?>
 
 <!-- SECCIÓN: Usuarios -->
 <div id="usuarios" class="seccion" style="display:none;">
@@ -279,6 +319,8 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
         <th>Nombre</th>
         <th>Email</th>
         <th>Rol</th>
+        <th>Estado</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -288,11 +330,29 @@ $users = $conexion->query("SELECT id, nombre, email, rol_id FROM usuarios ORDER 
           <td data-label="Nombre"><?= htmlspecialchars($u['nombre']) ?></td>
           <td data-label="Email"><?= htmlspecialchars($u['email']) ?></td>
           <td data-label="Rol"><?= $u['rol_id'] == 1 ? 'Admin' : 'Usuario' ?></td>
+          <td data-label="Estado"><?= htmlspecialchars($u['estado']) ?></td>
+          <td data-label="Acciones">
+            <?php if ($u['estado'] === 'activo'): ?>
+              <form method="post" action="admin_toggle_user.php" style="display:inline;">
+                <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                <input type="hidden" name="nuevo_estado" value="inactivo">
+                <button type="submit" class="btn btn-danger">Desactivar</button>
+              </form>
+            <?php else: ?>
+              <form method="post" action="admin_toggle_user.php" style="display:inline;">
+                <input type="hidden" name="id" value="<?= $u['id'] ?>">
+                <input type="hidden" name="nuevo_estado" value="activo">
+                <button type="submit" class="btn btn-success">Activar</button>
+              </form>
+            <?php endif; ?>
+          </td>
         </tr>
       <?php endwhile; ?>
     </tbody>
   </table>
 </div>
+
+
 
 <script>
   function mostrarSeccion(id) {
