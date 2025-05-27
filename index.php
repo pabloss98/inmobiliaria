@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -173,17 +176,15 @@
   <header>
     <h1>ModernHouse</h1>
     <nav>
-      <a href="#">Inicio</a>
+      <a href="index.php">Inicio</a>
       <a href="propiedades.php">Propiedades</a>
       <a href="favoritos.php">Favoritos</a>
-      <a href="contactos.php">Contacto</a>
       <a href="publicar.php">Publicar Propiedades</a>
     </nav>
 
     <!-- Verificar si el usuario está logueado y mostrar su nombre o los botones de login/registro -->
     <div class="user-info">
       <?php
-      session_start();
       if (isset($_SESSION['usuario_id'])) {
         echo 'Hola, ' . htmlspecialchars($_SESSION['nombre']);
         echo ' <a href="logout.php">Cerrar sesión</a>';

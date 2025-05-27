@@ -123,7 +123,7 @@ $resultado = $stmt->get_result();
       color: white;
       text-align: center;
       padding: 20px;
-      margin-top: 40px;
+      margin-top: 530px;
     }
   </style>
 </head>
@@ -131,11 +131,11 @@ $resultado = $stmt->get_result();
 
   <header>
     <h1>ModernHouse</h1>
-    <nav>
+   <nav>
       <a href="index.php">Inicio</a>
       <a href="propiedades.php">Propiedades</a>
-      <a href="#">Favoritos</a>
-      <a href="contactos.php">Contacto</a>
+      <a href="favoritos.php">Favoritos</a>
+      <a href="publicar.php">Publicar Propiedades</a>
     </nav>
   </header>
 

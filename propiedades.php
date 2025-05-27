@@ -189,7 +189,7 @@ if ($usuario_id) {
       <a href="index.php">Inicio</a>
       <a href="propiedades.php">Propiedades</a>
       <a href="favoritos.php">Favoritos</a>
-      <a href="contactos.php">Contacto</a>
+      <a href="publicar.php">Publicar Propiedades</a>
     </nav>
 
     <!-- Verificar si el usuario está logueado y mostrar su nombre o los botones de login/registro -->

@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost';
-$usuario = 'root';
-$clave = '';
-$base_de_datos = 'inmobiliaria';
+$host = 'fdb1028.awardspace.net';
+$usuario = '4597186_inmobiliaria';
+$clave = 'casa12345';
+$base_de_datos = '4597186_inmobiliaria';
 
 $conexion = new mysqli($host, $usuario, $clave, $base_de_datos);
 

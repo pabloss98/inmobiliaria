@@ -39,6 +39,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<style>
+    footer {
+      background-color: #0d6efd;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 450px;
+    }
+
+</style>
 
 <h2 class="mb-4">Registro de Usuario</h2>
 

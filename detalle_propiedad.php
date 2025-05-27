@@ -1,4 +1,7 @@
 <?php
+session_start();
+?>
+<?php
 require 'includes/conexion.php';
 
 $id = $_GET['id'] ?? null;
@@ -184,7 +187,6 @@ $prop = $resultado->fetch_assoc();
     <!-- Verificar si el usuario está logueado y mostrar su nombre o los botones de login/registro -->
     <div class="user-info">
       <?php
-      session_start();
       if (isset($_SESSION['usuario_id'])) {
         echo 'Hola, ' . htmlspecialchars($_SESSION['nombre']);
         echo ' <a href="logout.php">Cerrar sesión</a>';
@@ -205,13 +207,19 @@ $prop = $resultado->fetch_assoc();
 
 <?php if (isset($prop['tipo_operacion'])): ?>
   <?php if (isset($_SESSION['usuario_id'])): ?>
-    <form action="enviar_solicitud.php" method="POST">
+    <form id="solicitud-form" action="enviar_solicitud.php" method="POST" onsubmit="return mostrarAlerta()">
       <input type="hidden" name="propiedad_id" value="<?= $prop['id'] ?>">
       <input type="hidden" name="tipo_operacion" value="<?= $prop['tipo_operacion'] ?>">
-      <button type="submit" name="solicitar" class="operation-btn <?= $prop['tipo_operacion'] === 'venta' ? 'buy' : 'rent' ?>">
+      <button type="submit" class="operation-btn <?= $prop['tipo_operacion'] === 'venta' ? 'buy' : 'rent' ?>">
         <?= $prop['tipo_operacion'] === 'venta' ? 'Comprar' : 'Alquilar' ?>
       </button>
     </form>
+    <script>
+      function mostrarAlerta() {
+        alert('Tu petición ha sido enviada al administrador.');
+        return true; // Permite que el formulario se envíe
+      }
+    </script>
   <?php else: ?>
     <p style="margin-top: 15px; font-weight: bold; color: #dc3545;">
       Debes iniciar sesión para <?= $prop['tipo_operacion'] === 'venta' ? 'comprar' : 'alquilar' ?> esta propiedad.
@@ -221,7 +229,6 @@ $prop = $resultado->fetch_assoc();
     </a>
   <?php endif; ?>
 <?php endif; ?>
-
 
   <a href="propiedades.php" class="back-link">← Volver a Propiedades</a>
 </section>
