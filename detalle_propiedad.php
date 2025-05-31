@@ -178,7 +178,7 @@ $prop = $resultado->fetch_assoc();
   <header>
     <h1>ModernHouse</h1>
     <nav>
-      <a href="#">Inicio</a>
+      <a href="index.php">Inicio</a>
       <a href="propiedades.php">Propiedades</a>
       <a href="favoritos.php">Favoritos</a>
       <a href="contactos.php">Contacto</a>
