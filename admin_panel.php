@@ -240,7 +240,7 @@ $pendientes = $conexion->query("SELECT pp.id, pp.titulo, pp.precio, pp.estado, u
 <!-- SECCIÓN: Publicaciones -->
 <div id="publicaciones" class="seccion" style="display:none;">
   <h2>Publicaciones de Propiedades</h2>
-  <table>
+  <table class="table table-bordered">
     <thead>
       <tr>
         <th>ID</th>
@@ -248,6 +248,7 @@ $pendientes = $conexion->query("SELECT pp.id, pp.titulo, pp.precio, pp.estado, u
         <th>Precio</th>
         <th>Usuario</th>
         <th>Estado</th>
+        <th>Acciones</th> <!-- Nueva columna -->
       </tr>
     </thead>
     <tbody>
@@ -258,12 +259,22 @@ $pendientes = $conexion->query("SELECT pp.id, pp.titulo, pp.precio, pp.estado, u
           <td data-label="Precio"><?= number_format($p['precio'], 2) ?> €</td>
           <td data-label="Usuario"><?= htmlspecialchars($p['nombre'] ?? 'Invitado') ?></td>
           <td data-label="Estado"><?= isset($p['estado']) ? ucfirst($p['estado']) : '—' ?></td>
+          <td data-label="Acciones">
+            <?php if (isset($_SESSION['rol_id']) && $_SESSION['rol_id'] == 1): ?>
+              <form method="POST" action="eliminar_propiedad.php" onsubmit="return confirm('¿Seguro que deseas eliminar esta propiedad?');" style="display:inline;">
+                <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+              </form>
+            <?php else: ?>
+              —
+            <?php endif; ?>
           </td>
         </tr>
       <?php endwhile; ?>
     </tbody>
   </table>
 </div>
+
 
 <!-- SECCIÓN: Propiedades Pendientes -->
 <div id="pendientes" class="seccion" style="display:none;">
